@@ -12,9 +12,7 @@ public class Utils {
 		SimpleDateFormat sdf = new SimpleDateFormat(format, Locale.US);
 		try {
 			dt = sdf.parse(date);
-
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return dt;

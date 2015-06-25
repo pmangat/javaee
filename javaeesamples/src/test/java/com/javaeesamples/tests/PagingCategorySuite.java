@@ -7,6 +7,6 @@ import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Categories.class)
 @IncludeCategory(PagingCategory.class)
-@SuiteClasses({ CustomerServiceTests.class, EmployeeServiceTests.class })
+@SuiteClasses({ CustomerServiceTests.class, EmployeeServiceTests.class, OrdersServiceTests.class })
 public class PagingCategorySuite {
 }
