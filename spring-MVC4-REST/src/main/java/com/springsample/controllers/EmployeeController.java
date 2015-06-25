@@ -25,6 +25,12 @@ public class EmployeeController {
 	@Autowired
 	EmployeeService service;
 	
+	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	public Employee getEmployee(@PathVariable(value = "id") String id) {
+		Employee emp = service.get(Long.parseLong(id));
+		return emp;
+	}
+	
 	@RequestMapping(method = RequestMethod.GET)
 	public List<Employee> getEmployees(@RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
 			@RequestParam(value = "pageIndex", required = false, defaultValue = "0") int pageIndex,
