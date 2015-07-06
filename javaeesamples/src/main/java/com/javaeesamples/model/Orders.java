@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Entity
 public class Orders {
@@ -23,13 +24,11 @@ public class Orders {
 	@Column(name = "OrderId", updatable = false)
 	private Long Id;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH,
-			CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "CustomerFK")
 	private Customer customer;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.REFRESH,
-			CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "EmployeeFK")
 	private Employee employee;
 
@@ -44,10 +43,31 @@ public class Orders {
 	@Column(name = "Freight")
 	private double freight;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REFRESH,
-			CascadeType.MERGE }, fetch=FetchType.EAGER)
+	@OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
 	@JoinColumn(name = "OrderFK")
 	private Set<OrderDetail> orderDetails;
+
+	@Transient
+	private Long customerId;
+
+	public Long getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(Long customerId) {
+		this.customerId = customerId;
+	}
+
+	public Long getEmployeeId() {
+		return employeeId;
+	}
+
+	public void setEmployeeId(Long employeeId) {
+		this.employeeId = employeeId;
+	}
+
+	@Transient
+	private Long employeeId;
 
 	public Customer getCustomer() {
 		return customer;

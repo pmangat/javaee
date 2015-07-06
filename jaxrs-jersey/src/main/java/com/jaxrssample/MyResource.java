@@ -1,4 +1,4 @@
-package com.javaeesamples;
+package com.jaxrssample;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,10 +1,15 @@
 package com.javaeesamples.model;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 @Entity
 public class Customer {
@@ -34,6 +39,9 @@ public class Customer {
 	@Column(name = "PostalCode")
 	private String postalCode;
 
+	@OneToMany(mappedBy = "customer", cascade = { CascadeType.ALL }, fetch=FetchType.EAGER)
+	private Set<Orders> orders;
+	
 	public String getAddress() {
 		return address;
 	}
@@ -96,5 +104,13 @@ public class Customer {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public Set<Orders> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(Set<Orders> orders) {
+		this.orders = orders;
 	}
 }

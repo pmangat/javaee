@@ -1,5 +1,6 @@
 package com.javaeesamples.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.javaeesamples.model.Customer;
+import com.javaeesamples.model.Orders;
 import com.javaeesamples.repository.CustomerRepository;
 
 @Service("customerService")
@@ -15,7 +17,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepo;
-
+	
 	@Override
 	@Transactional
 	public Customer save(Customer customer) {
@@ -29,12 +31,25 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	@Transactional
-	public void delete(Customer customer) {
+	public void delete(long id) {
+		Customer customer = customerRepo.findOne(id);
 		customerRepo.delete(customer);
 	}
 
 	@Override
 	public List<Customer> getAll(Pageable pageRequest) {
 		return customerRepo.findAll(pageRequest).getContent();
+	}
+
+	@Override
+	public List<Orders> getOrders(long id) {
+		Customer customer = customerRepo.findOne(id);
+		if (customer != null)
+		{
+			List<Orders> list = new ArrayList<Orders>(customer.getOrders());
+			return list;
+		}
+
+		return new ArrayList<Orders>();
 	}
 }

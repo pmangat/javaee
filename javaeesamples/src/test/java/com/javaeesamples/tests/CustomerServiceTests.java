@@ -41,7 +41,7 @@ public class CustomerServiceTests {
 		assertThat(custService, notNullValue());
 
 		Customer customer = new Customer();
-		customer.setContactName("Prasad");
+		customer.setContactName("Joe Root");
 		customer.setPhoneNumber("199-100-1000");
 		customer.setAddress("123 Market Street");
 		customer.setCity("San Francisco");
@@ -54,7 +54,7 @@ public class CustomerServiceTests {
 		Customer rCustomer = custService.get(customer.getId());
 
 		assertThat(rCustomer, notNullValue());
-		assertThat(rCustomer.getContactName(), is("Prasad"));
+		assertThat(rCustomer.getContactName(), is("Joe Root"));
 		assertThat(rCustomer.getPhoneNumber(), is("199-100-1000"));
 		assertThat(rCustomer.getAddress(), is("123 Market Street"));
 		assertThat(rCustomer.getCity(), is("San Francisco"));
@@ -62,7 +62,7 @@ public class CustomerServiceTests {
 		assertThat(rCustomer.getPostalCode(), is("94123"));
 		assertThat(rCustomer.getCountry(), is("US"));
 		
-		custService.delete(rCustomer);
+		custService.delete(rCustomer.getId());
 		rCustomer = custService.get(customer.getId());
 		assertThat(rCustomer, nullValue());
 	}
@@ -72,7 +72,7 @@ public class CustomerServiceTests {
 		assertThat(custService, notNullValue());
 
 		Customer customer = new Customer();
-		customer.setContactName("Prasad");
+		customer.setContactName("Joe Root");
 		customer.setPhoneNumber("199-100-1000");
 		customer.setAddress("123 Market Street");
 		customer.setCity("San Francisco");
@@ -86,7 +86,7 @@ public class CustomerServiceTests {
 
 		assertThat(rCustomer, notNullValue());
 
-		custService.delete(rCustomer);
+		custService.delete(rCustomer.getId());
 
 		rCustomer = custService.get(rCustomer.getId());
 		assertThat(rCustomer, nullValue());
@@ -97,7 +97,7 @@ public class CustomerServiceTests {
 		assertThat(custService, notNullValue());
 
 		Customer customer = new Customer();
-		customer.setContactName("Prasad");
+		customer.setContactName("Joe Root");
 		customer.setPhoneNumber("199-100-1000");
 		customer.setAddress("123 Market Street");
 		customer.setCity("San Francisco");
@@ -109,7 +109,7 @@ public class CustomerServiceTests {
 
 		Customer rCustomer = custService.get(customer.getId());
 		assertThat(rCustomer, notNullValue());
-		assertThat(rCustomer.getContactName(), is("Prasad"));
+		assertThat(rCustomer.getContactName(), is("Joe Root"));
 		assertThat(rCustomer.getPhoneNumber(), is("199-100-1000"));
 		assertThat(rCustomer.getAddress(), is("123 Market Street"));
 		assertThat(rCustomer.getCity(), is("San Francisco"));
@@ -134,7 +134,7 @@ public class CustomerServiceTests {
 		assertThat(rCustomer.getPostalCode(), is("94133"));
 		assertThat(rCustomer.getCountry(), is("US"));
 		
-		custService.delete(rCustomer);
+		custService.delete(rCustomer.getId());
 		rCustomer = custService.get(customer.getId());
 		assertThat(rCustomer, nullValue());
 	}
@@ -182,8 +182,8 @@ public class CustomerServiceTests {
 		assertThat(customers.size(), is(2));
 		assertThat(customers.get(0).getContactName(), is("Ian"));
 		
-		custService.delete(customer);
-		custService.delete(customer2);
+		custService.delete(customer.getId());
+		custService.delete(customer2.getId());
 		
 		customers = custService.getAll(new PageRequest(0, 2));
 		assertThat(customers, notNullValue());

@@ -1,4 +1,4 @@
-package com.javaeesamples;
+package com.jaxrssample;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.javaeesamples;
+package com.jaxrssample;
 
 
 import org.glassfish.jersey.server.ResourceConfig;
