@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Customer;
 import com.javaeesamples.model.Employee;
 import com.javaeesamples.model.Orders;
@@ -37,18 +38,23 @@ public class OrdersServiceImpl implements OrdersService {
 			order.setEmployee(employee);
 		}
 
-		return ordersRepo.saveAndFlush(order);
+		return ordersRepo.save(order);
 	}
 
 	@Override
-	public Orders get(long id) {
-		return ordersRepo.findOne(id);
+	public Orders get(long id) throws EntityNotFoundException {
+		Orders order = ordersRepo.findOne(id);
+		if(order == null)
+			throw new EntityNotFoundException();
+		return order;
 	}
 
 	@Override
 	@Transactional
-	public void delete(long id) {
+	public void delete(long id) throws EntityNotFoundException {
 		Orders order = ordersRepo.findOne(id);
+		if(order == null)
+			throw new EntityNotFoundException();
 		ordersRepo.delete(order);
 	}
 }

@@ -12,12 +12,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.javaeesamples.bll.EmployeeService;
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Employee;
 import com.javaeesamples.model.SortDirection;
 
@@ -26,12 +28,39 @@ public class EmployeeResource {
 	@Autowired
 	private EmployeeService service;
 
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path("/")
+	public Employee addEmployee(Employee employee) {
+		Employee emp = service.save(employee);
+		return emp;
+	}
+
+	@DELETE
+	@Path("/{id}")
+	public Response deleteEmployee(@PathParam(value = "id") Long id) {
+		try {
+			service.delete(id);
+		} catch (EntityNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("Employee not found").build();
+		}
+		return Response.ok().build();
+	}
+
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path("/{id}")
-	public Employee getEmployee(@PathParam(value = "id") String id) {
-		Employee emp = service.get(Long.parseLong(id));
-		return emp;
+	public Response getEmployee(@PathParam(value = "id") Long id) {
+		Employee emp;
+		try {
+			emp = service.get(id);
+		} catch (EntityNotFoundException e) {
+			return Response.status(Response.Status.NOT_FOUND)
+					.entity("Employee not found").build();
+		}
+		return Response.ok(emp, MediaType.APPLICATION_JSON).build();
 	}
 
 	@GET
@@ -59,8 +88,8 @@ public class EmployeeResource {
 			direction = SortDirection.ASC;
 		if (sortColumns == null)
 			sortColumns = new ArrayList<String>();
-		
-		if(sortColumns.size() == 0)
+
+		if (sortColumns.size() == 0)
 			sortColumns.add("LastName");
 
 		return new PageRequest(pageIndex, pageSize,
@@ -68,18 +97,4 @@ public class EmployeeResource {
 				sortColumns.toArray(new String[sortColumns.size()]));
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path("/")
-	public Employee addEmployee(Employee employee) {
-		Employee emp = service.save(employee);
-		return emp;
-	}
-
-	@DELETE
-	@Path("/{id}")
-	public void deleteEmployee(@PathParam(value = "id") String id) {
-		service.delete(Long.parseLong(id));
-	}
 }

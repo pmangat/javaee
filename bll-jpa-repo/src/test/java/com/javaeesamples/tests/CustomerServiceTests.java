@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
@@ -16,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.javaeesamples.bll.CustomerService;
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Customer;
 
 public class CustomerServiceTests {
@@ -51,7 +53,12 @@ public class CustomerServiceTests {
 
 		customer = custService.save(customer);
 
-		Customer rCustomer = custService.get(customer.getId());
+		Customer rCustomer = null;
+		try {
+			rCustomer = custService.get(customer.getId());
+		} catch (EntityNotFoundException e) {
+			fail("customer should have been present");
+		}
 
 		assertThat(rCustomer, notNullValue());
 		assertThat(rCustomer.getContactName(), is("Joe Root"));
@@ -61,10 +68,19 @@ public class CustomerServiceTests {
 		assertThat(rCustomer.getState(), is("CA"));
 		assertThat(rCustomer.getPostalCode(), is("94123"));
 		assertThat(rCustomer.getCountry(), is("US"));
-		
-		custService.delete(rCustomer.getId());
-		rCustomer = custService.get(customer.getId());
-		assertThat(rCustomer, nullValue());
+
+		try {
+			custService.delete(rCustomer.getId());
+		} catch (EntityNotFoundException e1) {
+			fail("customer should have been deleted");
+		}
+
+		try {
+			rCustomer = custService.get(customer.getId());
+		} catch (EntityNotFoundException e) {
+			assertThat(e, notNullValue());
+		}
+
 	}
 
 	@Test
@@ -82,14 +98,26 @@ public class CustomerServiceTests {
 
 		customer = custService.save(customer);
 
-		Customer rCustomer = custService.get(customer.getId());
+		Customer rCustomer = null;
+		try {
+			rCustomer = custService.get(customer.getId());
+		} catch (EntityNotFoundException e) {
+			fail("customer should have been present");
+		}
 
 		assertThat(rCustomer, notNullValue());
 
-		custService.delete(rCustomer.getId());
+		try {
+			custService.delete(rCustomer.getId());
+		} catch (EntityNotFoundException e) {
+			fail("customer should have been deleted");
+		}
 
-		rCustomer = custService.get(rCustomer.getId());
-		assertThat(rCustomer, nullValue());
+		try {
+			rCustomer = custService.get(rCustomer.getId());
+		} catch (EntityNotFoundException e) {
+			assertThat(e, notNullValue());
+		}
 	}
 
 	@Test
@@ -107,7 +135,13 @@ public class CustomerServiceTests {
 
 		customer = custService.save(customer);
 
-		Customer rCustomer = custService.get(customer.getId());
+		Customer rCustomer = null;
+		try {
+			rCustomer = custService.get(customer.getId());
+		} catch (EntityNotFoundException e) {
+			fail("customer should have been present");
+		}
+		
 		assertThat(rCustomer, notNullValue());
 		assertThat(rCustomer.getContactName(), is("Joe Root"));
 		assertThat(rCustomer.getPhoneNumber(), is("199-100-1000"));
@@ -133,10 +167,18 @@ public class CustomerServiceTests {
 		assertThat(rCustomer.getState(), is("VA"));
 		assertThat(rCustomer.getPostalCode(), is("94133"));
 		assertThat(rCustomer.getCountry(), is("US"));
+
+		try {
+			custService.delete(rCustomer.getId());	
+		} catch (EntityNotFoundException e) {
+			fail("customer should have been deleted");
+		}
 		
-		custService.delete(rCustomer.getId());
-		rCustomer = custService.get(customer.getId());
-		assertThat(rCustomer, nullValue());
+		try {
+			rCustomer = custService.get(customer.getId());
+		} catch (EntityNotFoundException e) {
+			assertThat(e, notNullValue());
+		}
 	}
 
 	@Test
@@ -172,19 +214,23 @@ public class CustomerServiceTests {
 		assertThat(customers.size(), is(1));
 		assertThat(customers.get(0).getContactName(), is("Ian"));
 
-		customers = custService.getAll(new PageRequest(1, 1, Direction.ASC, new String[]{"ContactName"}));
+		customers = custService.getAll(new PageRequest(1, 1, Direction.ASC,
+				new String[] { "ContactName" }));
 		assertThat(customers, notNullValue());
 		assertThat(customers.size(), is(1));
 		assertThat(customers.get(0).getContactName(), is("Ian1"));
-		
+
 		customers = custService.getAll(new PageRequest(0, 2));
 		assertThat(customers, notNullValue());
 		assertThat(customers.size(), is(2));
 		assertThat(customers.get(0).getContactName(), is("Ian"));
-		
-		custService.delete(customer.getId());
-		custService.delete(customer2.getId());
-		
+
+		try {
+			custService.delete(customer.getId());
+			custService.delete(customer2.getId());
+		} catch (EntityNotFoundException e) {
+		}
+
 		customers = custService.getAll(new PageRequest(0, 2));
 		assertThat(customers, notNullValue());
 		assertThat(customers.size(), is(0));

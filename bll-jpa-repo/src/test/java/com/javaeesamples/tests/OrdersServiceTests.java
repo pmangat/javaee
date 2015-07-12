@@ -2,8 +2,8 @@ package com.javaeesamples.tests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -18,6 +18,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import com.javaeesamples.bll.CustomerService;
 import com.javaeesamples.bll.EmployeeService;
 import com.javaeesamples.bll.OrdersService;
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Customer;
 import com.javaeesamples.model.Employee;
 import com.javaeesamples.model.OrderDetail;
@@ -69,7 +70,12 @@ public class OrdersServiceTests {
 		
 		Orders sOrder = ordersService.save(order);
 
-		Orders rOrder = ordersService.get(sOrder.getId());
+		Orders rOrder = null;
+		try {
+			rOrder = ordersService.get(sOrder.getId());
+		} catch (EntityNotFoundException e) {
+			fail("Order should have been found");
+		}
 		assertThat(rOrder, notNullValue());
 		assertThat(rOrder.getCustomer().getContactName(), is("Ian"));
 		assertThat(rOrder.getEmployee().getLastName(), is("Root"));
@@ -104,13 +110,27 @@ public class OrdersServiceTests {
 
 		Orders sOrder = ordersService.save(order);
 
-		Orders rOrder = ordersService.get(sOrder.getId());
+		Orders rOrder = null;
+		try {
+			rOrder = ordersService.get(sOrder.getId());
+		} catch (EntityNotFoundException e) {
+			fail("Order should have been found");
+		}
 		assertThat(rOrder, notNullValue());
 		assertThat(rOrder.getOrderDetails().size(), is(2));
 
-		ordersService.delete(rOrder.getId());
-		rOrder = ordersService.get(rOrder.getId());
-		assertThat(rOrder, nullValue());
+		try {
+			ordersService.delete(rOrder.getId());
+		} catch (EntityNotFoundException e) {
+			fail("order should have been deleted");
+		}
+		
+		try {
+			rOrder = ordersService.get(rOrder.getId());
+		} catch (EntityNotFoundException e) {
+			assertThat(e, notNullValue());
+		}
+		
 	}
 
 	@Test
@@ -134,7 +154,12 @@ public class OrdersServiceTests {
 
 		Orders sOrder = ordersService.save(order);
 
-		Orders rOrder = ordersService.get(sOrder.getId());
+		Orders rOrder = null;
+		try {
+			rOrder = ordersService.get(sOrder.getId());
+		} catch (EntityNotFoundException e) {
+			fail("order should have been found");
+		}
 		assertThat(rOrder, notNullValue());
 		assertThat(rOrder.getOrderDetails().size(), is(2));
 
@@ -148,7 +173,11 @@ public class OrdersServiceTests {
 		
 		sOrder = ordersService.save(rOrder);
 		
-		rOrder = ordersService.get(sOrder.getId());
+		try {
+			rOrder = ordersService.get(sOrder.getId());
+		} catch (EntityNotFoundException e) {
+			fail("order should have been found");
+		}
 		assertThat(rOrder, notNullValue());
 		assertThat(rOrder.getOrderDetails().size(), is(2));
 		

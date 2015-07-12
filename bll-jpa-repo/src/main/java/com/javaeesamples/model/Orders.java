@@ -11,11 +11,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 public class Orders {
@@ -24,11 +26,12 @@ public class Orders {
 	@Column(name = "OrderId", updatable = false)
 	private Long Id;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CustomerFK")
+	@JsonBackReference
 	private Customer customer;
 
-	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "EmployeeFK")
 	private Employee employee;
 

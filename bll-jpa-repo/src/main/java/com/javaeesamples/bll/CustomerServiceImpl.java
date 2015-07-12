@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Customer;
 import com.javaeesamples.model.Orders;
 import com.javaeesamples.repository.CustomerRepository;
@@ -25,14 +26,19 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer get(long id) {
-		return customerRepo.findOne(id);
+	public Customer get(long id) throws EntityNotFoundException {
+		Customer customer = customerRepo.findOne(id);
+		if(customer == null)
+			throw new EntityNotFoundException();
+		return customer;
 	}
 
 	@Override
 	@Transactional
-	public void delete(long id) {
+	public void delete(long id) throws EntityNotFoundException {
 		Customer customer = customerRepo.findOne(id);
+		if(customer == null)
+			throw new EntityNotFoundException();
 		customerRepo.delete(customer);
 	}
 

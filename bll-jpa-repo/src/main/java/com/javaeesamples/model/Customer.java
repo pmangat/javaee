@@ -11,6 +11,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 public class Customer {
 	@Id
@@ -39,7 +41,8 @@ public class Customer {
 	@Column(name = "PostalCode")
 	private String postalCode;
 
-	@OneToMany(mappedBy = "customer", cascade = { CascadeType.ALL }, fetch=FetchType.EAGER)
+	@OneToMany(mappedBy = "customer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@JsonManagedReference
 	private Set<Orders> orders;
 	
 	public String getAddress() {

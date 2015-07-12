@@ -2,8 +2,8 @@ package com.javaeesamples.tests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.util.Date;
 import java.util.List;
@@ -17,6 +17,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 
 import com.javaeesamples.bll.EmployeeService;
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Employee;
 
 public class EmployeeServiceTests {
@@ -52,7 +53,13 @@ public class EmployeeServiceTests {
 
 		empService.save(emp);
 
-		Employee employee = empService.get(emp.getId());
+		Employee employee = null;
+		try {
+			employee = empService.get(emp.getId());
+		} catch (EntityNotFoundException e) {
+			fail("employee should have been present");
+		}
+
 		assertThat(employee, notNullValue());
 		assertThat(employee.getFirstName(), is("Joe"));
 		assertThat(employee.getLastName(), is("Root"));
@@ -73,13 +80,26 @@ public class EmployeeServiceTests {
 
 		empService.save(emp);
 
-		Employee employee = empService.get(emp.getId());
+		Employee employee = null;
+		try {
+			employee = empService.get(emp.getId());
+		} catch (EntityNotFoundException e) {
+			fail("employee should have been present");
+		}
+
 		assertThat(employee, notNullValue());
 
-		empService.delete(employee.getId());
+		try {
+			empService.delete(employee.getId());
+		} catch (EntityNotFoundException e) {
+			fail("employee should have been deleted");
+		}
 
-		employee = empService.get(emp.getId());
-		assertThat(employee, nullValue());
+		try {
+			employee = empService.get(emp.getId());
+		} catch (EntityNotFoundException e) {
+			assertThat(e, notNullValue());
+		}
 	}
 
 	@Test
@@ -95,7 +115,13 @@ public class EmployeeServiceTests {
 
 		empService.save(emp);
 
-		Employee employee = empService.get(emp.getId());
+		Employee employee = null;
+		try {
+			employee = empService.get(emp.getId());
+		} catch (EntityNotFoundException e1) {
+			fail("employee should have been present");
+		}
+
 		assertThat(employee, notNullValue());
 		assertThat(employee.getFirstName(), is("Joe"));
 		assertThat(employee.getLastName(), is("Root"));
@@ -108,7 +134,12 @@ public class EmployeeServiceTests {
 		employee.setDateOfBirth(dt);
 		empService.save(employee);
 
-		employee = empService.get(emp.getId());
+		try {
+			employee = empService.get(emp.getId());
+		} catch (EntityNotFoundException e) {
+			fail("employee should have been present");
+		}
+
 		assertThat(employee, notNullValue());
 		assertThat(employee.getFirstName(), is("Ian"));
 		assertThat(employee.getLastName(), is("Bell"));

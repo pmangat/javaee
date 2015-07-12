@@ -1,6 +1,5 @@
 package com.springsample.controllers;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.javaeesamples.bll.EmployeeService;
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Employee;
 import com.javaeesamples.model.SortDirection;
+import com.springsample.exceptions.ResourceNotFoundException;
 
 @RestController
 @RequestMapping("/employees")
@@ -24,42 +25,53 @@ public class EmployeeController {
 
 	@Autowired
 	EmployeeService service;
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public Employee getEmployee(@PathVariable(value = "id") String id) {
-		Employee emp = service.get(Long.parseLong(id));
+	public Employee getEmployee(@PathVariable(value = "id") Long id)
+			throws ResourceNotFoundException {
+		Employee emp;
+		try {
+			emp = service.get(id);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException();
+		}
 		return emp;
 	}
-	
+
 	@RequestMapping(method = RequestMethod.GET)
-	public List<Employee> getEmployees(@RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
+	public List<Employee> getEmployees(
+			@RequestParam(value = "pageSize", required = false, defaultValue = "50") int pageSize,
 			@RequestParam(value = "pageIndex", required = false, defaultValue = "0") int pageIndex,
 			@RequestParam(value = "direction", required = false, defaultValue = "ASC") SortDirection direction,
-			@RequestParam(value = "sortColumns", required = false) List<String> sortColumns)
-	{
+			@RequestParam(value = "sortColumns", required = false) List<String> sortColumns) {
 		PageRequest pageRequest = constructPageRequest(pageIndex, pageSize,
 				direction, sortColumns);
 		return service.getAll(pageRequest);
 	}
-	
+
 	@RequestMapping(method = RequestMethod.POST)
 	public Employee addEmployee(@RequestBody Employee employee) {
 		Employee emp = service.save(employee);
 		return emp;
 	}
-	
+
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-	public void deleteEmployee(@PathVariable(value = "id") String id) {
-		service.delete(Long.parseLong(id));
+	public void deleteEmployee(@PathVariable(value = "id") Long id)
+			throws ResourceNotFoundException {
+		try {
+			service.delete(id);
+		} catch (EntityNotFoundException e) {
+			throw new ResourceNotFoundException();
+		}
 	}
-	
+
 	private PageRequest constructPageRequest(int pageIndex, int pageSize,
 			SortDirection direction, List<String> sortColumns) {
 
 		if (sortColumns == null)
 			sortColumns = new ArrayList<String>();
-		
-		if(sortColumns.size() == 0)
+
+		if (sortColumns.size() == 0)
 			sortColumns.add("LastName");
 
 		return new PageRequest(pageIndex, pageSize,

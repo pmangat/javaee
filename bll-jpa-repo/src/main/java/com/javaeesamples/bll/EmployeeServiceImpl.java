@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.javaeesamples.exceptions.EntityNotFoundException;
 import com.javaeesamples.model.Employee;
 import com.javaeesamples.repository.EmployeeRepository;
 
@@ -23,14 +24,20 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public Employee get(long id) {
-		return employeeRepo.findOne(id);
+	public Employee get(long id) throws EntityNotFoundException {
+		Employee employee = employeeRepo.findOne(id);
+		if(employee == null)
+			throw new EntityNotFoundException();
+		
+		return employee;
 	}
 
 	@Override
 	@Transactional
-	public void delete(long id) {
+	public void delete(long id) throws EntityNotFoundException {
 		Employee employee = employeeRepo.findOne(id);
+		if(employee == null)
+			throw new EntityNotFoundException();
 		employeeRepo.delete(employee);
 	}
 
